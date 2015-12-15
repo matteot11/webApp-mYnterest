@@ -13,18 +13,18 @@ import java.util.ArrayList;
 
 public class ReadMain {
 	
-	final static int TIMER = 1*60*60*1000;
+	final static int TIMER = 4*1000;  //tempo che il server aspetta prima di aggiornare le notizie
 	
 	static NewsCollector nc;
 
 	static Connection con;
 
-	static ArrayList<News> list = new ArrayList<News>();
+	static ArrayList<News> myNews = new ArrayList<News>();
 
 	//SELEZIONE FONTI E TOPIC
 
-	/*---------TOPIC DELLA REPUBBLICA---------*/
-
+	//---------TOPIC DELLA REPUBBLICA---------
+/*
 	final static String rfeeds = "http://www.repubblica.it/rss/sport/rss2.0.xml?ref=HRF-1"; //repubblica - sport
 	
 	final static String rfeedc = "http://www.repubblica.it/rss/cronaca/rss2.0.xml?ref=HRF-1"; //repubblica - cronaca
@@ -52,7 +52,7 @@ public class ReadMain {
 	final static String rfeedec = "http://www.repubblica.it/rss/economia/rss2.0.xml?ref=HRF-1"; //repubblica - economia
 	
 	
-	/*-------TOPIC DEL CORRIERE DELLA SERA---------*/
+	//-------TOPIC DEL CORRIERE DELLA SERA---------
 	
 	final static String cfeedc = "http://xml.corriereobjects.it/rss/cronache.xml";  //corriere - cronaca
 	
@@ -80,7 +80,7 @@ public class ReadMain {
 	
 
 	
-	/*----------TOPIC DELLA STAMPA----------*/
+	//----------TOPIC DELLA STAMPA----------
 	
 	final static String sfeedp = "http://www.lastampa.it/italia/politica/rss.xml"; //lastampa-politica
 	
@@ -102,7 +102,7 @@ public class ReadMain {
 	
 	//final static String sfeede = "http://www.lastampa.it/societa/rss.xml"; //lastampa-costumi
 	
-	final static String sfeedm = "http://www.lastampa.it/motori/rss.xml"; //lastampa-motori
+	//final static String sfeedm = "http://www.lastampa.it/motori/rss.xml"; //lastampa-motori
 	
 	final static String sfeeds = "http://www.lastampa.it/sport/rss.xml"; //lastampa-sport
 	
@@ -125,11 +125,17 @@ public class ReadMain {
 	final static String sp = "spettacoli";
 	final static String ec = "economia";
 	final static String cu = "cultura";
-	final static String an = "animali";
+	final static String an = "animali";*/
+	
+	
+	
+
+	
 	
 	
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, ParseException, InterruptedException {
 		
+
 		
 		
 	  /*
@@ -220,7 +226,7 @@ public class ReadMain {
 		*/
 		
 		//creazione arraylist
-
+/*
 		list.add(new News(rfeeds, s, rep));
 		list.add(new News(rfeedc, c, rep));
 		list.add(new News(rfeedp, p, rep));
@@ -255,8 +261,10 @@ public class ReadMain {
 		list.add(new News(sfeedec, ec, sta));
 		list.add(new News(sfeedcu, cu, sta));
 		list.add(new News(sfeedan, an, sta));
+*/
 
-
+		
+		myNews = UrlSetter.setUrl();
 		
 		File f = new File ("mynterest.db");
 
@@ -279,7 +287,7 @@ public class ReadMain {
 			statDel.executeUpdate();*/
 
 
-			for( News news : list){
+			for( News news : myNews){
 
 				nc = new NewsCollector(con,news);
 
@@ -287,22 +295,28 @@ public class ReadMain {
 			}  
 
 
+			StoreFeed sf = new StoreFeed(con);
+			
+			sf.deleteOldNews();
+			
+			
+			
 			con.close();
 
-			Thread.sleep(2000);
+			Thread.sleep(TIMER);
 		}
 
-		/*
+	/*
     String templateInsert= "select date from News where topic='politica'";
 	PreparedStatement statInsert=con.prepareStatement(templateInsert);
-	ResultSet rs = statInsert.executeQuery();*/
-		/*
+	ResultSet rs = statInsert.executeQuery();
+		
 	while(rs.next())	{
 
 		System.out.println(rs.getTimestamp("date"));
-	}*/
+	}
 
-		/*
+		
 	 String templateInsert1= "SELECT title, date FROM news ORDER BY date DESC";
 		PreparedStatement statInsert1=con.prepareStatement(templateInsert1);
 		ResultSet rs1 = statInsert1.executeQuery();
@@ -310,11 +324,13 @@ public class ReadMain {
 
 		while(rs1.next())	{
 
-			System.out.println(rs1.getString("title"));
+			//System.out.println(rs1.getString("title"));
 			System.out.println(rs1.getTimestamp("date"));	
 		}
-
-		 */
-
+		*/
 	}
+		 
+		
+	
+	
 } 

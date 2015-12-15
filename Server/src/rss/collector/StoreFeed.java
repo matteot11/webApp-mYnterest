@@ -14,6 +14,8 @@ import java.util.Locale;
 
 public class StoreFeed {
 	
+	final static int DELETEBEFORE = -2;
+	
 	FeedMessage message;
 	Connection con;
 	ResultSet rs;
@@ -40,7 +42,7 @@ public class StoreFeed {
 			statInsert.setString(4,message.getTopic());
 			statInsert.setString(5,message.getSource());
 
-			statInsert.setTimestamp(6,Conversion.dateConvert(message.getPubDate()));
+			statInsert.setTimestamp(6, Conversion.dateConvert(message.getPubDate()));
 			
 			statInsert.executeUpdate();
 		}
@@ -50,5 +52,28 @@ public class StoreFeed {
 
 
 	
+	public void deleteOldNews () throws SQLException	{
+		
+		
+		java.util.Date date= new java.util.Date();
+		
+		 
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, DELETEBEFORE);
+		long x = cal.getTimeInMillis();
+		
+		//System.out.println(cal.DAY_OF_YEAR);
+		
+		String templateCheck = "Delete from News where date < ?";
+		PreparedStatement statCheck = con.prepareStatement(templateCheck);
+		statCheck.setLong(1, x);
+		
+		statCheck.executeUpdate();
+		/*
+		while(rs.next())	{
+			System.out.println(rs.getDate(1));
+		}
+		*/
+	}
 
 }
