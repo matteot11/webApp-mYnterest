@@ -4,13 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class StoreFeed {
 	
@@ -24,29 +20,38 @@ public class StoreFeed {
 		this.con=con;
 	}
 	
-	public void storeNews (FeedMessage message) throws SQLException, ParseException	{
+	public boolean storeNews (FeedMessage message) throws SQLException, ParseException	{
 
 		String templateCheck = "Select link from News where link=?";
 		PreparedStatement statCheck = con.prepareStatement(templateCheck);
 		statCheck.setString(1, message.getLink());
 
 		rs = statCheck.executeQuery();
+		Date d = new Date();
 
-		if(!rs.next())	{
+		if(!rs.next())	{ //se la notizia non è già presente nel db
 
-			String templateInsert = "insert into News VALUES (?,?,?,?,?,?)";
-			PreparedStatement statInsert=con.prepareStatement(templateInsert);
-			statInsert.setString(1,message.getTitle());
-			statInsert.setString(2,message.getDescription());
-			statInsert.setString(3,message.getLink());
-			statInsert.setString(4,message.getTopic());
-			statInsert.setString(5,message.getSource());
-
-			statInsert.setTimestamp(6, Conversion.dateConvert(message.getPubDate()));
+			if(Conversion.dateConvert(message.getPubDate()).getTime()>d.getTime()-1000*60*60*24*2 && !message.getDescription().isEmpty())	{  //e se la notizia ha pubdate maggiore di 2 giorni fa(d.getTime() mi restituisce la data odierna in millisecondi), inoltre la notizia deve contenere descrizione
+				String templateInsert = "insert into News VALUES (?,?,?,?,?,?)";   //la inseriamo nel db
+				PreparedStatement statInsert=con.prepareStatement(templateInsert);
+				statInsert.setString(1,message.getTitle());
+				statInsert.setString(2,message.getDescription());
+				statInsert.setString(3,message.getLink());
+				statInsert.setString(4,message.getTopic());
+				statInsert.setString(5,message.getSource());
+	
+				statInsert.setTimestamp(6, Conversion.dateConvert(message.getPubDate()));
+				
+				statInsert.executeUpdate();
+				
+				return true;  //se è stata aggiunta una notizia in un certo topic, torniamo true
+			}
 			
-			statInsert.executeUpdate();
 		}
-
+		
+			return false;
+			
+		
 
 	}
 
@@ -55,7 +60,7 @@ public class StoreFeed {
 	public void deleteOldNews () throws SQLException	{
 		
 		
-		java.util.Date date= new java.util.Date();
+		//java.util.Date date= new java.util.Date();
 		
 		 
 		Calendar cal = Calendar.getInstance();

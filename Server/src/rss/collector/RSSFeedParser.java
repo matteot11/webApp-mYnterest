@@ -38,9 +38,9 @@ public class RSSFeedParser {
     }
   }
 
-  public Feed readFeed() {
+  public Feed readFeed() throws XMLStreamException {
     Feed feed = null;
-    try {
+    
       boolean isFeedHeader = true;
       // Set header values intial to the empty string
       String description = "";
@@ -125,9 +125,6 @@ public class RSSFeedParser {
         }
         
       }
-    } catch (XMLStreamException e) {
-      throw new RuntimeException(e);
-    }
     
     return feed;
   }

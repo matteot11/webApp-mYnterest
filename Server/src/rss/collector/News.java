@@ -7,20 +7,20 @@ public class News {
 	private String source;
 	
 	
-	public News(String url/*, String topic*/, String source) {
+	public News(String url, String topic) {
 		super();
 		this.url = url;
-		//this.topic = topic;
-		this.source = source;
+		this.topic = topic;
+		//this.source = source;
 		
 		if(url.contains("repubblica"))	{
-			this.topic="LaRepubblica.it";
+			this.source="LaRepubblica.it";
 		}
 		if(url.contains("corriere"))	{
-			this.topic="Corriere.it";
+			this.source="Corriere.it";
 		}
 		if(url.contains("lastampa"))	{
-			this.topic="LaStampa.it";
+			this.source="LaStampa.it";
 		}
 	
 	}
